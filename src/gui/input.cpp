@@ -178,13 +178,17 @@ QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noex
 			return {};
 		}
 
-		// Ignore Ctrl, Alt, and Cmd key combos by themselves.
-		if (key == Key_Control() || key == Qt::Key_Alt || key == Key_Cmd()) {
+		// Ignore all modifier-only key events.
+		if (key == Qt::Key::Key_Alt
+			|| key == Qt::Key::Key_Control
+			|| key == Qt::Key::Key_Meta
+			|| key == Qt::Key::Key_Super_L
+			|| key == Qt::Key::Key_Super_R) {
 			return {};
 		}
 
 		// Issue #344: Ignore Ctrl-Shift, C-S- being treated as C-Space
-		if (mod & Qt::ShiftModifier) {
+		if (mod & Qt::KeyboardModifier::ShiftModifier) {
 			return {};
 		}
 	}
