@@ -10,6 +10,7 @@ private slots:
 	void TestSpecialKeys();
 	void TestModifierKeys();
 	void OnlyModifierKeysIgnored();
+	void LessThanKeyBehavior();
 };
 
 void TestInput::TestModifierKeys()
@@ -75,6 +76,32 @@ void TestInput::OnlyModifierKeysIgnored()
 	QKeyEvent evIssue593{ QEvent::KeyPress, Qt::Key::Key_Super_L, Qt::KeyboardModifier::ControlModifier};
 	QCOMPARE(NeovimQt::Input::convertKey(evIssue593.text(), evIssue593.key(), evIssue593.modifiers()),
 		QString{});
+}
+
+void TestInput::LessThanKeyBehavior()
+{
+	auto testLessThanModifier = [](Qt::KeyboardModifier mod, const QString& expected) noexcept
+	{
+		const auto modAndShift { Qt::KeyboardModifier::ShiftModifier | mod };
+
+		QKeyEvent keyEvent{ QEvent::KeyPress, Qt::Key::Key_Less, modAndShift, "<" };
+
+		QCOMPARE(NeovimQt::Input::convertKey(keyEvent.text(), keyEvent.key(), keyEvent.modifiers()),
+			expected);
+	};
+
+	testLessThanModifier(Qt::KeyboardModifier::ControlModifier, "<C-lt>");
+
+	testLessThanModifier(Qt::KeyboardModifier::AltModifier, "<A-lt>");
+
+	testLessThanModifier(Qt::KeyboardModifier::MetaModifier, "<D-lt>");
+
+	testLessThanModifier(Qt::KeyboardModifier::NoModifier, "<lt>");
+
+	// Issue#607: Shift is implied with "<", send "<lt>" instead.
+	QKeyEvent evIssue607{ QEvent::KeyPress, Qt::Key::Key_Less, Qt::KeyboardModifier::ShiftModifier, "<" };
+	QCOMPARE(NeovimQt::Input::convertKey(evIssue607.text(), evIssue607.key(), evIssue607.modifiers()),
+		QString{ "<lt>" });
 }
 
 QTEST_MAIN(TestInput)
