@@ -2,8 +2,6 @@
 
 #include <QMap>
 #include <QVariant>
-#include <QKeyEvent>
-#include <QDebug>
 
 namespace NeovimQt { namespace Input {
 
