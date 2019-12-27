@@ -42,4 +42,19 @@ QString GetModifierPrefix(Qt::KeyboardModifiers mod) noexcept
 	return modprefix;
 }
 
+QString GetTextFromQKeyEvent(QKeyEvent *ev) noexcept
+{
+	const QChar c = QChar(ev->key());
+
+	if (c.isPrint()) {
+		if (!(ev->modifiers() & Qt::KeyboardModifier::ShiftModifier)) {
+			return c.toLower();
+		}
+
+		return c;
+	}
+
+	return "";
+}
+
 } } // namespace NeovimQt::Input

@@ -1070,12 +1070,12 @@ void Shell::keyPressEvent(QKeyEvent *ev)
 		this->setCursor(Qt::BlankCursor);
 	}
 
-	const QKeyEvent evNormalized = Input::NormalizeQKeyEvent(ev);
-	const QString inp = Input::convertKey(evNormalized.text(), evNormalized.key(), evNormalized.modifiers());
-	qCritical() << "QKeyEvent evNormalized:" << (QKeyEvent *)(&evNormalized);
-	qCritical() << "QString evNormalized.text(): " << evNormalized.text();
-	qCritical() << "int evNormalized.key(): " << evNormalized.key();
-	qCritical() << "QString inp" << inp;
+	const QString inp = Input::convertKey(
+		Input::GetTextFromQKeyEvent(ev),
+		ev->key(),
+		ev->modifiers()
+	);
+
 	if (inp.isEmpty()) {
 		QWidget::keyPressEvent(ev);
 		return;

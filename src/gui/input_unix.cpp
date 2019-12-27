@@ -42,4 +42,9 @@ QString GetModifierPrefix(Qt::KeyboardModifiers mod) noexcept
 	return modprefix;
 }
 
+QString GetTextFromQKeyEvent(QKeyEvent *ev) noexcept
+{
+	return ev->text();
+}
+
 } } // namespace NeovimQt::Input

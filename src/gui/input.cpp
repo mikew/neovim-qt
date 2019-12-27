@@ -106,30 +106,6 @@ static QString GetEventString(QEvent::Type type) noexcept
 	}
 }
 
-QKeyEvent DefaultNormalizeQKeyEvent(QKeyEvent *ev) noexcept
-{
-	return *ev;
-}
-
-QKeyEvent NormalizeQKeyEvent(QKeyEvent *ev) noexcept
-{
-	QString text = ev->text();
-	const int key = ev->key();
-	const Qt::KeyboardModifiers modifiers = ev->modifiers();
-
-	// qCritical() << "QKeyEvent ev:" << ev;
-	// qCritical() << "QString ev->text(): " << ev->text();
-	// qCritical() << "int ev->key(): " << ev->key();
-
-	if (modifiers & CmdModifier() || modifiers & Qt::KeyboardModifier::ShiftModifier) {
-		text = QChar(key);
-	}
-
-	return QKeyEvent(ev->type(), key, modifiers, text);
-
-	// return *ev;
-}
-
 QString convertMouse(
 	Qt::MouseButton bt,
 	QEvent::Type type,
@@ -152,11 +128,23 @@ QString convertMouse(
 
 QString ToKeyString(const QString& modPrefix, const QString& key) noexcept
 {
-	return QString{ "<%1%2>" }.arg(modPrefix).arg(key);
+	return QString{ "<%1%2>" }
+		.arg(modPrefix)
+		.arg(modPrefix.isEmpty() ? key : key.toUpper());
 }
 
 QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noexcept
 {
+	// Ignore all modifier-only key events.
+	if (key == Qt::Key::Key_Alt
+		|| key == Qt::Key::Key_Control
+		|| key == Qt::Key::Key_Meta
+		|| key == Qt::Key::Key_Shift
+		|| key == Qt::Key::Key_Super_L
+		|| key == Qt::Key::Key_Super_R) {
+		return {};
+	}
+
 	static const QMap<int, QString> keypadKeys {
 		{ Qt::Key_Home, "<%1kHome>" },
 		{ Qt::Key_End, "<%1kEnd>" },
@@ -204,28 +192,6 @@ QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noex
 	if (text.isEmpty()) {
 		if (!(mod & ControlModifier()) && !(mod & CmdModifier())) {
 			// This is a special key we can't handle
-			return {};
-		}
-
-		// Ignore all modifier-only key events.
-		if (key == Qt::Key::Key_Alt
-			|| key == Qt::Key::Key_Control
-			|| key == Qt::Key::Key_Meta
-			|| key == Qt::Key::Key_Super_L
-			|| key == Qt::Key::Key_Super_R) {
-			return {};
-		}
-
-		// Issue #344: Ignore Ctrl-Shift, C-S- being treated as C-Space
-		// if (
-		// 	(
-		// 		key == Qt::Key::Key_Shift
-		// 		|| key == Key_Control()
-		// 	)
-		// 	&& (mod & Qt::KeyboardModifier::ShiftModifier)
-		// 	&& (mod & ControlModifier())
-		// ) {
-		if (mod & Qt::KeyboardModifier::ShiftModifier) {
 			return {};
 		}
 	}
