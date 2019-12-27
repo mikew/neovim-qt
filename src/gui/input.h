@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QPoint>
 #include <QString>
+#include <QKeyEvent>
 
 namespace NeovimQt { namespace Input {
 
@@ -46,5 +47,8 @@ Qt::KeyboardModifiers CmdModifier() noexcept;
 
 /// Platform specific Qt::Key used as 'Cmd'/'Meta'.
 Qt::Key Key_Cmd() noexcept;
+
+QKeyEvent DefaultNormalizeQKeyEvent(QKeyEvent *ev) noexcept;
+QKeyEvent NormalizeQKeyEvent(QKeyEvent *ev) noexcept;
 
 } } // namespace NeovimQt:Input

@@ -2,6 +2,8 @@
 
 #include <QMap>
 #include <QVariant>
+#include <QKeyEvent>
+#include <QDebug>
 
 namespace NeovimQt { namespace Input {
 
@@ -104,6 +106,30 @@ static QString GetEventString(QEvent::Type type) noexcept
 	}
 }
 
+QKeyEvent DefaultNormalizeQKeyEvent(QKeyEvent *ev) noexcept
+{
+	return *ev;
+}
+
+QKeyEvent NormalizeQKeyEvent(QKeyEvent *ev) noexcept
+{
+	QString text = ev->text();
+	const int key = ev->key();
+	const Qt::KeyboardModifiers modifiers = ev->modifiers();
+
+	// qCritical() << "QKeyEvent ev:" << ev;
+	// qCritical() << "QString ev->text(): " << ev->text();
+	// qCritical() << "int ev->key(): " << ev->key();
+
+	if (modifiers & CmdModifier() || modifiers & Qt::KeyboardModifier::ShiftModifier) {
+		text = QChar(key);
+	}
+
+	return QKeyEvent(ev->type(), key, modifiers, text);
+
+	// return *ev;
+}
+
 QString convertMouse(
 	Qt::MouseButton bt,
 	QEvent::Type type,
@@ -191,6 +217,14 @@ QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noex
 		}
 
 		// Issue #344: Ignore Ctrl-Shift, C-S- being treated as C-Space
+		// if (
+		// 	(
+		// 		key == Qt::Key::Key_Shift
+		// 		|| key == Key_Control()
+		// 	)
+		// 	&& (mod & Qt::KeyboardModifier::ShiftModifier)
+		// 	&& (mod & ControlModifier())
+		// ) {
 		if (mod & Qt::KeyboardModifier::ShiftModifier) {
 			return {};
 		}
