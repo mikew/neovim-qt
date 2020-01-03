@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -ex
+
+mkdir -p build/
+(
+  cd build
+  num_cpus=$(python2 -c 'import multiprocessing; print multiprocessing.cpu_count() + 1')
+  cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Release ..
+  make -j "${num_cpus}" nvim-qt
+)
