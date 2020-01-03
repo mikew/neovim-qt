@@ -198,9 +198,10 @@ QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noex
 	const QChar c{ (text.isEmpty()) ? key : text.at(0) };
 
 	// Remove Shift
-	if (c.unicode() >= 0x80 || (!c.isLetterOrNumber() && c.isPrint())) {
+  // TODO Can't find any ill effects when not even doing this.
+  if (mod == Qt::ShiftModifier && c.isLetterOrNumber()) {
 		mod &= ~Qt::ShiftModifier;
-	}
+  }
 
 	// Remove Ctrl empty characters at the start of the ASCII range
 	if (c.unicode() < 0x20) {
