@@ -198,8 +198,7 @@ QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noex
 	const QChar c{ (text.isEmpty()) ? key : text.at(0) };
 
 	// Remove Shift
-  // TODO Can't find any ill effects when not even doing this.
-  if (mod == Qt::ShiftModifier && c.isLetterOrNumber()) {
+  if (c.isPrint()) {
 		mod &= ~Qt::ShiftModifier;
   }
 
