@@ -128,7 +128,7 @@ QString ToKeyString(const QString& modPrefix, const QString& key) noexcept
 {
 	return QString{ "<%1%2>" }
 		.arg(modPrefix)
-		.arg(modPrefix.isEmpty() ? key : key.toUpper());
+		.arg(key);
 }
 
 QString convertKey(const QString& text, int key, Qt::KeyboardModifiers mod) noexcept
