@@ -15,7 +15,14 @@ if (WIN32 AND USE_STATIC_QT)
 	add_definitions(-DUSE_STATIC_QT)
 endif ()
 
-set(SOURCES shellcontents.cpp helpers.cpp shellwidget.cpp konsole_wcwidth.cpp)
+set(SOURCES
+  cell.cpp
+  highlight.cpp
+  helpers.cpp
+  konsole_wcwidth.cpp
+  shellcontents.cpp
+  shellwidget.cpp)
+
 add_library(qshellwidget STATIC ${SOURCES})
 target_link_libraries(qshellwidget Qt5::Widgets)
 
