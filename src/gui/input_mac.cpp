@@ -46,6 +46,14 @@ QString GetTextFromQKeyEvent(QKeyEvent *ev) noexcept
 {
 	const QChar c = QChar(ev->key());
 
+  if (ev->key() == Qt::Key_BracketLeft && ev->modifiers() & Qt::ShiftModifier) {
+    return "{";
+  }
+
+  if (ev->key() == Qt::Key_BracketRight && ev->modifiers() & Qt::ShiftModifier) {
+    return "}";
+  }
+
 	if (c.isPrint()) {
 		if (!(ev->modifiers() & Qt::KeyboardModifier::ShiftModifier)) {
 			return c.toLower();
